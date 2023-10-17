@@ -1,5 +1,6 @@
 // Name Field
-
+const name = document.getElementById('name');
+name.focus();
 
 // Job Role Section
 const roles = document.getElementById('title');
