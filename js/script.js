@@ -1,6 +1,6 @@
 // Name Field
-const nameInput = document.getElementById('name');
-nameInput.focus();
+const userName = document.getElementById('name');
+userName.focus();
 
 // Job Role Section
 const roles = document.getElementById('title');
@@ -76,8 +76,36 @@ payPal.style.display = 'none';
 bitcoin.style.display = 'none';
 paymentMethod.children[1].setAttribute('selected', true);
 
-
 // Form Validation
+const form = document.querySelector('form');
+const userEmail = document.querySelector('#email');
+const cardNumber = document.querySelector('#cc-num');
+const zipCode = document.querySelector('#zip');
+const cvv = document.querySelector('#cvv');
+
+const isNameValid = (userName) => {
+
+};
+
+const isEmailValid = (userEmail) => {
+
+};
+
+const isCardNumberValid = (cardNumber) => {
+
+};
+
+const isCVVValid = (cvv) => {
+
+};
+
+const isZipCodeValid = (zipCode) => {
+
+};
+
+const isActivityValid = () => {
+    return total > 0;
+};
 
 
 
