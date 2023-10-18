@@ -35,7 +35,22 @@ design.addEventListener('change', (e) => {
 });
 
 // Activities Section
+const registerForActivities = document.querySelector('#activities');
+const costForActivities = document.querySelector('#activities-cost');
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+let total = 0; // Use let instead of const for total
 
+registerForActivities.addEventListener('change', (e) => {
+    const cost = parseInt(e.target.getAttribute('data-cost'));
+    if (e.target.checked) {
+        total += cost;
+    } else {
+        total -= cost;
+    }
+    costForActivities.textContent = `Total : $${total}`; 
+    console.log(total);
+});
+costForActivities.textContent = `Total : $0`;
 
 
 // Payment Info Section
