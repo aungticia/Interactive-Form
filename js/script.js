@@ -1,6 +1,6 @@
 // Name Field
-const name = document.getElementById('name');
-name.focus();
+const nameInput = document.getElementById('name');
+nameInput.focus();
 
 // Job Role Section
 const roles = document.getElementById('title');
@@ -39,7 +39,40 @@ design.addEventListener('change', (e) => {
 
 
 // Payment Info Section
+const paymentMethod = document.querySelector('#payment');
+const creditCard = document.querySelector('#credit-card');
+const payPal = document.querySelector('#paypal');
+const bitcoin = document.querySelector('#bitcoin');
 
+paymentMethod.addEventListener('change', (e) => {
+    payPal.style.display = 'none';
+    bitcoin.style.display = 'none';
+    creditCard.style.display = 'none';
+
+    if (e.target.value === 'credit-card') {
+        creditCard.style.display = 'block';
+    } else if (e.target.value === 'paypal') {
+        payPal.style.display = 'block';
+    } else if (e.target.value === 'bitcoin') {
+        bitcoin.style.display = 'block';
+    }
+});
+payPal.style.display = 'none';
+bitcoin.style.display = 'none';
+paymentMethod.children[1].setAttribute('selected', true);
 
 
 // Form Validation
+
+
+
+
+
+
+
+
+
+
+
+
+
