@@ -14,44 +14,87 @@ roles.addEventListener('change', (e) => {
         other.style.display = 'none';
     }
 });
-// T-Shirt Info Section
-const design = document.querySelector('#design');
-const colorOptions = document.querySelectorAll('option[data-theme');
-const color = document.querySelector('#color');
-color.disabled = true;
 
-design.addEventListener('change', (e) => {
-    color.disabled = false;
-    
-    for (let i = 0; i < colorOptions.length; i++) {
-        if (design.value === colorOptions[i].getAttribute('data-theme')) {
-            colorOptions[i].hidden = true;
-            colorOptions[i].disabled = true;
+// T-Shirt Info Section
+
+// Select the design and color elements
+const designSelect = document.querySelector('#design');
+const colorSelect = document.querySelector('#color');
+const colorOptions = colorSelect.querySelectorAll('option');
+
+// Disable the color dropdown by default
+colorSelect.disabled = true;
+
+// Function to filter color options based on the selected design
+const filterColorOptions = (selectedDesign) => {
+    for (const option of colorOptions) {
+        const dataTheme = option.getAttribute('data-theme');
+        if (dataTheme === selectedDesign || dataTheme === 'default') {
+            option.hidden = false;
+            option.disabled = false;
         } else {
-            colorOptions[i].hidden = false;
-            colorOptions[i].disabled = false;
+            option.hidden = true;
+            option.disabled = true;
         }
     }
+};
+
+// Listen for changes in the design select element
+designSelect.addEventListener('change', (e) => {
+    const selectedDesign = e.target.value;
+
+    // Enable the color dropdown
+    colorSelect.disabled = false;
+
+    // Set the "Select Theme" option as the default selected option
+    colorOptions.forEach((option) => {
+        option.selected = option.getAttribute('data-theme') === 'default';
+    });
+
+    // Filter and display color options based on the selected design
+    filterColorOptions(selectedDesign);
+});
+
+// Initialize the color dropdown to have the "Select Theme" option selected
+colorOptions.forEach((option) => {
+    option.selected = option.getAttribute('data-theme') === 'default';
 });
 
 // Activities Section
 const registerForActivities = document.querySelector('#activities');
 const costForActivities = document.querySelector('#activities-cost');
 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let total = 0; 
+let total = 0;
 
 registerForActivities.addEventListener('change', (e) => {
     const cost = parseInt(e.target.getAttribute('data-cost'));
+
+    // Find the day and time of the selected activity
+    const selectedActivityTime = e.target.getAttribute('data-day-and-time');
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        const checkbox = checkboxes[i];
+        const activityTime = checkbox.getAttribute('data-day-and-time');
+
+        if (selectedActivityTime === activityTime && e.target !== checkbox) {
+            if (e.target.checked) {
+                checkbox.disabled = true;
+                checkbox.parentElement.classList.add('disabled');
+            } else {
+                checkbox.disabled = false;
+                checkbox.parentElement.classList.remove('disabled');
+            }
+        }
+    }
+
     if (e.target.checked) {
         total += cost;
     } else {
         total -= cost;
     }
-    costForActivities.textContent = `Total : $${total}`; 
-    console.log(total);
-});
-costForActivities.textContent = `Total : $0`;
 
+    costForActivities.textContent = `Total: $${total}`;
+});
 
 // Payment Info Section
 const paymentMethod = document.querySelector('#payment');
@@ -67,11 +110,12 @@ paymentMethod.addEventListener('change', (e) => {
     if (e.target.value === 'credit-card') {
         creditCard.style.display = 'block';
     } else if (e.target.value === 'paypal') {
-        payPal.style.display = 'block';
+        payPal.style.display = 'block'; 
     } else if (e.target.value === 'bitcoin') {
         bitcoin.style.display = 'block';
     }
 });
+
 payPal.style.display = 'none';
 bitcoin.style.display = 'none';
 paymentMethod.children[1].setAttribute('selected', true);
@@ -79,6 +123,7 @@ paymentMethod.children[1].setAttribute('selected', true);
 // Form Validation
 const form = document.querySelector('form');
 const userEmail = document.querySelector('#email');
+const emailError = document.querySelector('#email-hint'); // Changed the ID to match your HTML
 const cardNumber = document.querySelector('#cc-num');
 const zipCode = document.querySelector('#zip');
 const cvv = document.querySelector('#cvv');
@@ -93,19 +138,47 @@ const isEmailValid = (userEmail) => {
     return /^[^@]+@[^@.]+\.[a-z]+$/i.test(userEmail);
 };
 
+// Add a 'keyup' event listener to the email input field
+userEmail.addEventListener('keyup', (e) => {
+    // Get the current value of the email input
+    const inputValue = e.target.value;
+
+    if (inputValue.trim() === '') {
+        // Show an error message for an empty email
+        emailError.textContent = 'Email address is required.';
+        emailError.style.display = 'block';
+        e.target.parentElement.classList.remove('valid');
+        e.target.parentElement.classList.add('error-border', 'not-valid');
+    } else if (!isEmailValid(inputValue)) {
+        // Show an error message for an invalid email format
+        emailError.textContent = 'Invalid email format. Please enter a valid email address.';
+        emailError.style.display = 'block';
+        e.target.parentElement.classList.remove('valid');
+        e.target.parentElement.classList.add('error-border', 'not-valid');
+    } else {
+        // Clear the error message and styles when the email is valid
+        emailError.style.display = 'none';
+        e.target.parentElement.classList.remove('error-border', 'not-valid');
+        e.target.parentElement.classList.add('valid');
+    }
+});
+
 const isCardNumberValid = (cardNumber) => {
     if (selectPayment.value === 'credit-card') { 
-        return /^[0-9]{13,16}$/.test(cardNumber); } 
+        return /^[0-9]{13,16}$/.test(cardNumber);
+    } 
 };
 
 const isCVVValid = (cvv) => {
     if (selectPayment.value === 'credit-card') { 
-        return /^[0-9]{3}$/.test(cvv); }
+        return /^[0-9]{3}$/.test(cvv);
+    }
 };
 
 const isZipCodeValid = (zipCode) => {
     if (selectPayment.value === 'credit-card') { 
-        return /^[0-9]{5}$/.test(zipCode); }
+        return /^[0-9]{5}$/.test(zipCode);
+    }
 };
 
 const isActivityValid = () => {
@@ -134,15 +207,17 @@ form.addEventListener('submit', (e) => {
 }); 
 
 // Accessibility
-const checkBoxInput = document.querySelectorAll('input[type="checkbox"]');
-for (let i = 0; i < checkBoxInput.length; i++) { 
-    checkBoxInput[i].addEventListener('focus', (e) => { 
-        let parent = checkBoxInput[i].parentElement; 
+const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+for (let i = 0; i < checkboxInputs.length; i++) { 
+    checkboxInputs[i].addEventListener('focus', (e) => { 
+        let parent = checkboxInputs[i].parentElement; 
         parent.classList.add('focus') 
     }); 
-    checkBoxInput[i].addEventListener('blur', (e) => { 
-        let parent = checkBoxInput[i].parentElement; 
+    checkboxInputs[i].addEventListener('blur', (e) => { 
+        let parent = checkboxInputs[i].parentElement; 
         parent.classList.remove('focus');
     }); 
 }
+
+
 

@@ -1,0 +1,29 @@
+#Real-Time Error Messages#
+
+In our registration form, we have implemented real-time validation for the email input field. This feature helps users get immediate feedback as they type their email address. It ensures that the entered email address is in a valid format.
+
+--How It Works--
+When a user interacts with the email input field, the system listens for the `keyup` event. This event occurs each time the user presses and releases a key on their keyboard.
+
+- **Validation Function**: We have a validation function called `isEmailValid` that checks if the email address is in a valid format. It uses a regular expression to match common email patterns.
+
+- **User Feedback**: Based on the result of the validation, the system updates the visual cues for the email field. If the email is valid, the input field is marked as "valid." If the email is invalid, the input field is marked with an "error-border" and a "not-valid" class, and an error message is displayed.
+
+- **Real-Time Feedback**: Users can see if their email is valid or not as they type. The visual cues change dynamically, providing immediate feedback on the email's validity.
+
+#Conditional Error Message#
+
+We have implemented a feature that provides enhanced error messages for the email input field in our registration form. This enhancement ensures that users receive specific and informative feedback based on the nature of the error.
+
+--How It Works--
+1. **Empty Email Address**: When a user attempts to submit an empty email address, we display a clear error message that informs the user that an email address is required. This helps users understand that they must provide an email address to continue.
+
+2. **Invalid Email Format**: If a user enters an email address with an incorrect format, we present a distinct error message indicating that the email format is invalid. This guidance assists users in understanding what went wrong and encourages them to enter a valid email address.
+
+3. **Valid Email**: When the user corrects the email address, the error messages disappear, and the field is marked as valid. This clear feedback assures users that they've successfully addressed any issues with the email input.
+
+
+
+
+
+
