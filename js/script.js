@@ -16,8 +16,6 @@ roles.addEventListener('change', (e) => {
 });
 
 // T-Shirt Info Section
-
-// Select the design and color elements
 const designSelect = document.querySelector('#design');
 const colorSelect = document.querySelector('#color');
 const colorOptions = colorSelect.querySelectorAll('option');
@@ -25,7 +23,7 @@ const colorOptions = colorSelect.querySelectorAll('option');
 // Disable the color dropdown by default
 colorSelect.disabled = true;
 
-// Function to filter color options based on the selected design
+// Function to filter and display color options based on the selected design
 const filterColorOptions = (selectedDesign) => {
     for (const option of colorOptions) {
         const dataTheme = option.getAttribute('data-theme');
@@ -46,19 +44,20 @@ designSelect.addEventListener('change', (e) => {
     // Enable the color dropdown
     colorSelect.disabled = false;
 
+    // Filter and display color options based on the selected design
+    filterColorOptions(selectedDesign);
+
     // Set the "Select Theme" option as the default selected option
     colorOptions.forEach((option) => {
         option.selected = option.getAttribute('data-theme') === 'default';
     });
-
-    // Filter and display color options based on the selected design
-    filterColorOptions(selectedDesign);
 });
 
 // Initialize the color dropdown to have the "Select Theme" option selected
 colorOptions.forEach((option) => {
     option.selected = option.getAttribute('data-theme') === 'default';
 });
+
 
 // Activities Section
 const registerForActivities = document.querySelector('#activities');
@@ -185,26 +184,52 @@ const isActivityValid = () => {
     return total > 0;
 };
 
-form.addEventListener('submit', (e) => { 
-    const validator = (inputElement, validationFunction) => { 
-    const inputValue = inputElement.value; 
-        if (!validationFunction(inputValue)) { 
-            e.preventDefault(); inputElement.parentElement.classList.remove('valid'); 
-            inputElement.parentElement.classList.add('error-border', 'not-valid'); 
-            inputElement.nextElementSibling.style.display = 'block'; 
-        } else { 
-            inputElement.parentElement.classList.add('valid'); 
-            inputElement.parentElement.classList.remove('error-border', 'not-valid'); 
-            inputElement.nextElementSibling.style.display = 'none'; 
-        } 
-    }; 
-        validator(userName, isNameValid); 
-        validator(userEmail, isEmailValid); 
-        validator(cardNumber, isCardNumberValid); 
-        validator(zipCode, isZipCodeValid); 
-        validator(cvv, isCVVValid); 
-        validator(costForActivities, isActivityValid); 
-}); 
+form.addEventListener('submit', (e) => {
+    const validator = (inputElement, validationFunction) => {
+      const inputValue = inputElement.value;
+  
+      if (inputElement.id === 'cc-num' && selectPayment.value !== 'credit-card') {
+        return;
+      }
+  
+      if (!validationFunction(inputValue)) {
+        e.preventDefault();
+        inputElement.parentElement.classList.remove('valid');
+        inputElement.parentElement.classList.add('error-border', 'not-valid');
+        inputElement.nextElementSibling.style.display = 'block';
+      } else {
+        inputElement.parentElement.classList.add('valid');
+        inputElement.parentElement.classList.remove('error-border', 'not-valid');
+        inputElement.nextElementSibling.style.display = 'none';
+      }
+    };
+  
+    // Validate name and email
+    validator(userName, isNameValid);
+    validator(userEmail, isEmailValid);
+  
+    // Validate payment method
+    if (selectPayment.value === 'credit-card') {
+      // Validate credit card details
+      validator(cardNumber, isCardNumberValid);
+      validator(zipCode, isZipCodeValid);
+      validator(cvv, isCVVValid);
+    }
+  
+    // Validate activities
+    validator(costForActivities, isActivityValid);
+  
+    // Allow the form to submit when payment is PayPal or Bitcoin
+    if (selectPayment.value !== 'credit-card') {
+      return;
+    }
+  
+    // If there are validation errors, prevent the default form submission
+    if (document.querySelectorAll('.not-valid').length > 0) {
+      e.preventDefault();
+    }
+  });
+  
 
 // Accessibility
 const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
